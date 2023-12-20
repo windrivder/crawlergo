@@ -60,7 +60,7 @@ bin/crawlergo -c /tmp/chromium/chrome -t 10 http://testphp.vulnweb.com/
 You can also use this with docker without headache: 
 
 ```shell
-git clone https://github.com/Qianlitp/crawlergo
+git clone https://github.com/windrivder/crawlergo
 docker build . -t crawlergo
 docker run crawlergo http://testphp.vulnweb.com/
 ```

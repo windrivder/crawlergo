@@ -201,6 +201,6 @@ https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-te
 如果你有关于浏览器爬虫的想法，欢迎和我交流。
 
 微博：[@9ian1i](https://weibo.com/u/5242748339) 
-Github: [@9ian1i](https://github.com/Qianlitp) 
+Github: [@9ian1i](https://github.com/windrivder) 
 
 相关文章：[漏扫动态爬虫实践](https://www.anquanke.com/post/id/178339)

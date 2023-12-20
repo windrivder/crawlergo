@@ -4,13 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg"
-	"github.com/Qianlitp/crawlergo/pkg/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/windrivder/crawlergo/pkg"
+	"github.com/windrivder/crawlergo/pkg/config"
 )
 
 func TestTaskConfigOptFunc(t *testing.T) {
-	// 测试 https://github.com/Qianlitp/crawlergo/pull/101 修改的代码
+	// 测试 https://github.com/windrivder/crawlergo/pull/101 修改的代码
 	var taskConf pkg.TaskConfig
 	for _, fn := range []pkg.TaskConfigOptFunc{
 		pkg.WithTabRunTimeout(config.TabRunTimeout),

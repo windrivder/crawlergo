@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/net/publicsuffix"
 
-	"github.com/Qianlitp/crawlergo/pkg/tools/requests"
+	"github.com/windrivder/crawlergo/pkg/tools/requests"
 )
 
 type URL struct {
@@ -56,7 +56,8 @@ func GetUrl(_url string, parentUrls ...URL) (*URL, error) {
 	return &u, nil
 }
 
-/**
+/*
+*
 修复不完整的URL
 */
 func (u *URL) parse(_url string, parentUrls ...URL) (string, error) {
@@ -97,14 +98,16 @@ func (u *URL) QueryMap() map[string]interface{} {
 	return queryMap
 }
 
-/**
+/*
+*
 返回去掉请求参数的URL
 */
 func (u *URL) NoQueryUrl() string {
 	return fmt.Sprintf("%s://%s%s", u.Scheme, u.Host, u.Path)
 }
 
-/**
+/*
+*
 返回不带Fragment的URL
 */
 func (u *URL) NoFragmentUrl() string {
@@ -119,7 +122,8 @@ func (u *URL) NavigationUrl() string {
 	return u.NoSchemeFragmentUrl()
 }
 
-/**
+/*
+*
 返回根域名
 
 如 a.b.c.360.cn 返回 360.cn
@@ -142,7 +146,8 @@ func (u *URL) RootDomain() string {
 	return domain[1+strings.LastIndex(domain[:i], "."):]
 }
 
-/**
+/*
+*
 文件扩展名
 */
 func (u *URL) FileName() string {
@@ -155,7 +160,8 @@ func (u *URL) FileName() string {
 	}
 }
 
-/**
+/*
+*
 文件扩展名
 */
 func (u *URL) FileExt() string {
@@ -167,7 +173,8 @@ func (u *URL) FileExt() string {
 	return parts
 }
 
-/**
+/*
+*
 回去上一级path, 如果当前就是root path，则返回空字符串
 */
 func (u *URL) ParentPath() string {

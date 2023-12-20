@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/js"
-	"github.com/Qianlitp/crawlergo/pkg/logger"
-	"github.com/Qianlitp/crawlergo/pkg/tools"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/js"
+	"github.com/windrivder/crawlergo/pkg/logger"
+	"github.com/windrivder/crawlergo/pkg/tools"
 )
 
 /**
@@ -20,7 +20,8 @@ err := EvaluateAsDevTools(snippet(submitJS, cashX(true), sel, nodes[0]), &res).D
 具体环境实现在 chromedp.submit 函数中 参考即可写出
 */
 
-/**
+/*
+*
 在页面Loaded之后执行
 同时等待 afterDOMRun 之后执行
 */
@@ -56,7 +57,8 @@ func (tab *Tab) AfterLoadedRun() {
 	logger.Logger.Debug("afterLoadedRun end")
 }
 
-/**
+/*
+*
 自动化点击提交表单
 */
 func (tab *Tab) formSubmit() {
@@ -71,7 +73,8 @@ func (tab *Tab) formSubmit() {
 	go tab.clickAllButton()
 }
 
-/**
+/*
+*
 设置form的target指向一个frame
 */
 func (tab *Tab) setFormToFrame() {
@@ -94,7 +97,8 @@ func (tab *Tab) setFormToFrame() {
 	_ = chromedp.SetAttributeValue(formNodes, "target", nameStr, chromedp.ByNodeID).Do(tCtx)
 }
 
-/**
+/*
+*
 点击按钮 type=submit
 */
 func (tab *Tab) clickSubmit() {
@@ -130,7 +134,8 @@ func (tab *Tab) clickSubmit() {
 	_ = chromedp.Click(inputNodes, chromedp.ByNodeID).Do(tCtx2)
 }
 
-/**
+/*
+*
 click all button
 */
 func (tab *Tab) clickAllButton() {
@@ -164,7 +169,8 @@ func (tab *Tab) clickAllButton() {
 	}
 }
 
-/**
+/*
+*
 触发内联事件
 */
 func (tab *Tab) triggerInlineEvents() {
@@ -174,7 +180,8 @@ func (tab *Tab) triggerInlineEvents() {
 	logger.Logger.Debug("triggerInlineEvents end")
 }
 
-/**
+/*
+*
 触发DOM2级事件
 */
 func (tab *Tab) triggerDom2Events() {
@@ -184,7 +191,8 @@ func (tab *Tab) triggerDom2Events() {
 	logger.Logger.Debug("triggerDom2Events end")
 }
 
-/**
+/*
+*
 a标签的href值为伪协议，
 */
 func (tab *Tab) triggerJavascriptProtocol() {
@@ -195,7 +203,8 @@ func (tab *Tab) triggerJavascriptProtocol() {
 	logger.Logger.Debug("clickATagJavascriptProtocol end")
 }
 
-/**
+/*
+*
 移除DOM节点变化监听
 */
 func (tab *Tab) RemoveDOMListener() {

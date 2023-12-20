@@ -12,15 +12,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg"
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/logger"
-	model2 "github.com/Qianlitp/crawlergo/pkg/model"
-	"github.com/Qianlitp/crawlergo/pkg/tools"
-	"github.com/Qianlitp/crawlergo/pkg/tools/requests"
 	"github.com/panjf2000/ants/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"github.com/windrivder/crawlergo/pkg"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/logger"
+	model2 "github.com/windrivder/crawlergo/pkg/model"
+	"github.com/windrivder/crawlergo/pkg/tools"
+	"github.com/windrivder/crawlergo/pkg/tools/requests"
 )
 
 /**

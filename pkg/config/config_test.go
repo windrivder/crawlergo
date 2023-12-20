@@ -3,8 +3,8 @@ package config_test
 import (
 	"testing"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
 	"github.com/stretchr/testify/assert"
+	"github.com/windrivder/crawlergo/pkg/config"
 )
 
 func TestStaticSuffix(t *testing.T) {

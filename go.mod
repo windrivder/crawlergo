@@ -1,4 +1,4 @@
-module github.com/Qianlitp/crawlergo
+module github.com/windrivder/crawlergo
 
 go 1.16
 

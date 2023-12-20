@@ -11,16 +11,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/logger"
-	model2 "github.com/Qianlitp/crawlergo/pkg/model"
-	"github.com/Qianlitp/crawlergo/pkg/tools"
-	"github.com/Qianlitp/crawlergo/pkg/tools/requests"
 	"github.com/chromedp/cdproto/fetch"
 	"github.com/chromedp/cdproto/network"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/logger"
+	model2 "github.com/windrivder/crawlergo/pkg/model"
+	"github.com/windrivder/crawlergo/pkg/tools"
+	"github.com/windrivder/crawlergo/pkg/tools/requests"
 )
 
-/**
+/*
+*
 处理每一个HTTP请求
 */
 func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
@@ -50,7 +51,7 @@ func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
 	tab.HandleHostBinding(&req)
 
 	// 静态资源 全部阻断
-	// https://github.com/Qianlitp/crawlergo/issues/106
+	// https://github.com/windrivder/crawlergo/issues/106
 	if config.StaticSuffixSet.Contains(url.FileExt()) {
 		_ = fetch.FailRequest(v.RequestID, network.ErrorReasonBlockedByClient).Do(ctx)
 		req.Source = config.FromStaticRes
@@ -72,14 +73,16 @@ func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
 	_ = fetch.ContinueRequest(v.RequestID).Do(ctx)
 }
 
-/**
+/*
+*
 判断是否为导航请求
 */
 func (tab *Tab) IsNavigatorRequest(networkID string) bool {
 	return networkID == tab.LoaderID
 }
 
-/**
+/*
+*
 处理 401 407 认证弹窗
 */
 func (tab *Tab) HandleAuthRequired(req *fetch.EventAuthRequired) {
@@ -95,7 +98,8 @@ func (tab *Tab) HandleAuthRequired(req *fetch.EventAuthRequired) {
 	_ = fetch.ContinueWithAuth(req.RequestID, &authRes).Do(ctx)
 }
 
-/**
+/*
+*
 处理导航请求
 */
 func (tab *Tab) HandleNavigationReq(req *model2.Request, v *fetch.EventRequestPaused) {
@@ -156,7 +160,8 @@ func (tab *Tab) HandleNavigationReq(req *model2.Request, v *fetch.EventRequestPa
 	}
 }
 
-/**
+/*
+*
 处理Host绑定
 */
 func (tab *Tab) HandleHostBinding(req *model2.Request) {
@@ -189,7 +194,8 @@ func (tab *Tab) IsTopFrame(FrameID string) bool {
 	return FrameID == tab.TopFrameId
 }
 
-/**
+/*
+*
 解析响应内容中的URL 使用正则匹配
 */
 func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {

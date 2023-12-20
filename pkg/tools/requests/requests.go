@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg/logger"
 	"github.com/pkg/errors"
+	"github.com/windrivder/crawlergo/pkg/logger"
 )
 
 const DefaultUa = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)" +

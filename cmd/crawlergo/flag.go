@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
 	"github.com/urfave/cli/v2"
+	"github.com/windrivder/crawlergo/pkg/config"
 )
 
 var cliFlags = []cli.Flag{

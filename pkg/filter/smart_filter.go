@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/logger"
-	"github.com/Qianlitp/crawlergo/pkg/model"
-	"github.com/Qianlitp/crawlergo/pkg/tools"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/logger"
+	"github.com/windrivder/crawlergo/pkg/model"
+	"github.com/windrivder/crawlergo/pkg/tools"
 
 	mapset "github.com/deckarep/golang-set"
 )
@@ -578,7 +578,7 @@ func (s *SmartFilter) calcFragmentID(fragment string) string {
 		logger.Logger.Error("cannot calculate url fragment: ", err)
 		return ""
 	}
-	// XXX: discuss https://github.com/Qianlitp/crawlergo/issues/100
+	// XXX: discuss https://github.com/windrivder/crawlergo/issues/100
 	fakeReq := model.GetRequest(config.GET, fakeUrl)
 	s.getMark(&fakeReq)
 	// s.repeatCountStatistic(&fakeReq)

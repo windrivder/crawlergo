@@ -3,9 +3,9 @@ package filter
 import (
 	"strings"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/model"
 	mapset "github.com/deckarep/golang-set"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/model"
 )
 
 type SimpleFilter struct {

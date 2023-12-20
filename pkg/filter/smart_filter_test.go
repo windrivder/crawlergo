@@ -3,8 +3,8 @@ package filter
 import (
 	"testing"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/model"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/model"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -10,10 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Qianlitp/crawlergo/pkg/config"
-	"github.com/Qianlitp/crawlergo/pkg/js"
-	"github.com/Qianlitp/crawlergo/pkg/logger"
-	model2 "github.com/Qianlitp/crawlergo/pkg/model"
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/cdproto/dom"
 	"github.com/chromedp/cdproto/fetch"
@@ -22,6 +18,10 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/gogf/gf/encoding/gcharset"
+	"github.com/windrivder/crawlergo/pkg/config"
+	"github.com/windrivder/crawlergo/pkg/js"
+	"github.com/windrivder/crawlergo/pkg/logger"
+	model2 "github.com/windrivder/crawlergo/pkg/model"
 )
 
 type Tab struct {
@@ -236,7 +236,8 @@ func RunWithTimeOut(ctx *context.Context, timeout time.Duration, tasks chromedp.
 	}
 }
 
-/**
+/*
+*
 添加收集到的URL到结果列表，需要处理Host绑定
 */
 func (tab *Tab) AddResultUrl(method string, _url string, source string) {
@@ -277,7 +278,8 @@ func (tab *Tab) AddResultUrl(method string, _url string, source string) {
 	tab.lock.Unlock()
 }
 
-/**
+/*
+*
 添加请求到结果列表，拦截请求时处理了Host绑定，此处无需处理
 */
 func (tab *Tab) AddResultRequest(req model2.Request) {
@@ -289,7 +291,8 @@ func (tab *Tab) AddResultRequest(req model2.Request) {
 	tab.lock.Unlock()
 }
 
-/**
+/*
+*
 获取当前标签页CDP的执行上下文
 */
 func (tab *Tab) GetExecutor() context.Context {
@@ -298,7 +301,8 @@ func (tab *Tab) GetExecutor() context.Context {
 	return ctx
 }
 
-/**
+/*
+*
 关闭弹窗
 */
 func (tab *Tab) dismissDialog() {
@@ -307,7 +311,8 @@ func (tab *Tab) dismissDialog() {
 	_ = page.HandleJavaScriptDialog(false).Do(ctx)
 }
 
-/**
+/*
+*
 处理回调
 */
 func (tab *Tab) HandleBindingCalled(event *runtime.EventBindingCalled) {
@@ -324,7 +329,8 @@ func (tab *Tab) HandleBindingCalled(event *runtime.EventBindingCalled) {
 	tab.Evaluate(fmt.Sprintf(js.DeliverResultJS, bcPayload.Name, bcPayload.Seq, "s"))
 }
 
-/**
+/*
+*
 执行JS
 */
 func (tab *Tab) Evaluate(expression string) {
@@ -340,7 +346,8 @@ func (tab *Tab) Evaluate(expression string) {
 	}
 }
 
-/**
+/*
+*
 立即根据条件获取Nodes的ID，不等待
 */
 func (tab *Tab) GetNodeIDs(sel string) ([]cdp.NodeID, error) {
@@ -348,7 +355,8 @@ func (tab *Tab) GetNodeIDs(sel string) ([]cdp.NodeID, error) {
 	return dom.QuerySelectorAll(tab.DocBodyNodeId, sel).Do(ctx)
 }
 
-/**
+/*
+*
 根据给的Node执行JS
 */
 func (tab *Tab) EvaluateWithNode(expression string, node *cdp.Node) error {
@@ -361,7 +369,8 @@ func (tab *Tab) EvaluateWithNode(expression string, node *cdp.Node) error {
 	return nil
 }
 
-/**
+/*
+*
 识别页面的编码
 */
 func (tab *Tab) DetectCharset() {
