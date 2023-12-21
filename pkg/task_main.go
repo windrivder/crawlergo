@@ -8,7 +8,6 @@ import (
 	"github.com/windrivder/crawlergo/pkg/config"
 	engine2 "github.com/windrivder/crawlergo/pkg/engine"
 	"github.com/windrivder/crawlergo/pkg/filter"
-	filter2 "github.com/windrivder/crawlergo/pkg/filter"
 	"github.com/windrivder/crawlergo/pkg/logger"
 	"github.com/windrivder/crawlergo/pkg/model"
 
@@ -26,8 +25,7 @@ type CrawlerTask struct {
 	taskWG        sync.WaitGroup       // 等待协程池所有任务结束
 	crawledCount  int                  // 爬取过的数量
 	taskCountLock sync.Mutex           // 已爬取的任务总数锁
-	Start         time.Time            //开始时间
-
+	Start         time.Time            // 开始时间
 }
 
 type Result struct {
@@ -56,13 +54,12 @@ func NewCrawlerTask(targets []*model.Request, taskConf TaskConfig) (*CrawlerTask
 
 	baseFilter := filter.NewSimpleFilter(targets[0].URL.Host)
 
-	if taskConf.FilterMode == config.SmartFilterMode {
+	switch taskConf.FilterMode {
+	case config.SmartFilterMode:
 		crawlerTask.filter = filter.NewSmartFilter(baseFilter, false)
-
-	} else if taskConf.FilterMode == config.StrictFilterMode {
+	case config.StrictFilterMode:
 		crawlerTask.filter = filter.NewSmartFilter(baseFilter, true)
-
-	} else {
+	default:
 		crawlerTask.filter = baseFilter
 	}
 
@@ -187,7 +184,7 @@ func (t *CrawlerTask) Run() {
 	copy(todoFilterAll, t.Result.AllReqList)
 
 	t.Result.AllReqList = []*model.Request{}
-	var simpleFilter filter2.SimpleFilter
+	var simpleFilter filter.SimpleFilter
 	for _, req := range todoFilterAll {
 		if !simpleFilter.UniqueFilter(req) {
 			t.Result.AllReqList = append(t.Result.AllReqList, req)
@@ -239,7 +236,7 @@ func (t *tabTask) Task() {
 	defer t.crawlerTask.taskWG.Done()
 
 	// 设置tab超时时间，若设置了程序最大运行时间， tab超时时间和程序剩余时间取小
-	timeremaining := t.crawlerTask.Start.Add(time.Duration(t.crawlerTask.Config.MaxRunTime) * time.Second).Sub(time.Now())
+	timeremaining := time.Until(t.crawlerTask.Start.Add(time.Duration(t.crawlerTask.Config.MaxRunTime) * time.Second))
 	tabTime := t.crawlerTask.Config.TabRunTimeout
 	if t.crawlerTask.Config.TabRunTimeout > timeremaining {
 		tabTime = timeremaining

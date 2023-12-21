@@ -3,6 +3,7 @@ package engine
 import (
 	"bufio"
 	"context"
+	"crypto/sha256"
 	"encoding/base64"
 	"io"
 	"net/textproto"
@@ -40,6 +41,7 @@ func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
 		PostData: _req.PostData,
 	}
 	req := model2.GetRequest(_req.Method, url, _option)
+	req.RequestID = string(v.RequestID)
 
 	if IsIgnoredByKeywordMatch(req, tab.config.IgnoreKeywords) {
 		_ = fetch.FailRequest(v.RequestID, network.ErrorReasonBlockedByClient).Do(ctx)
@@ -129,7 +131,8 @@ func (tab *Tab) HandleNavigationReq(req *model2.Request, v *fetch.EventRequestPa
 		headers := tools.ConvertHeaders(req.Headers)
 		headers["Range"] = "bytes=0-1048576"
 		res, err := requests.Request(req.Method, req.URL.String(), headers, []byte(req.PostData), &requests.ReqOptions{
-			AllowRedirect: false, Proxy: tab.config.Proxy})
+			AllowRedirect: false, Proxy: tab.config.Proxy,
+		})
 		if err != nil {
 			logger.Logger.Debug(err)
 			_ = fetch.FailRequest(v.RequestID, network.ErrorReasonConnectionAborted).Do(ctx)
@@ -206,6 +209,22 @@ func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 		logger.Logger.Debug("ParseResponseURL ", err)
 		return
 	}
+
+	if v.RequestID.String() == tab.NavNetworkID {
+		h := sha256.New()
+		h.Write(res)
+		for idx, result := range tab.ResultList {
+			if result.RequestID == v.RequestID.String() {
+				result.RespHeaders = v.Response.Headers
+				result.StatusCode = v.Response.Status
+				result.IPAddress = v.Response.RemoteIPAddress
+				result.Title = tab.NavigateTitle
+				result.RespBodyHash = string(h.Sum(nil))
+			}
+			tab.ResultList[idx] = result
+		}
+	}
+
 	resStr := string(res)
 
 	urlRegex := regexp.MustCompile(config.SuspectURLRegex)
@@ -234,13 +253,13 @@ func (tab *Tab) HandleRedirectionResp(v *network.EventResponseReceivedExtraInfo)
 
 func (tab *Tab) GetContentCharset(v *network.EventResponseReceived) {
 	defer tab.WG.Done()
-	var getCharsetRegex = regexp.MustCompile("charset=(.+)$")
+	getCharsetRegex := regexp.MustCompile("charset=(.+)$")
 	for key, value := range v.Response.Headers {
 		if key == "Content-Type" {
 			value := value.(string)
 			if strings.Contains(value, "charset") {
 				value = getCharsetRegex.FindString(value)
-				value = strings.ToUpper(strings.Replace(value, "charset=", "", -1))
+				value = strings.ToUpper(strings.ReplaceAll(value, "charset=", ""))
 				tab.PageCharset = value
 				tab.PageCharset = strings.TrimSpace(tab.PageCharset)
 			}

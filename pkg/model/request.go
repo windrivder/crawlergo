@@ -37,6 +37,13 @@ type Request struct {
 	Source          string
 	RedirectionFlag bool
 	Proxy           string
+
+	RequestID    string
+	RespHeaders  map[string]interface{}
+	RespBodyHash string
+	Title        string
+	IPAddress    string
+	StatusCode   int64
 }
 
 var supportContentType = []string{config.JSON, config.URLENCODED}
@@ -71,7 +78,7 @@ func GetRequest(method string, URL *URL, options ...Options) Request {
 完整格式化输出
 */
 func (req *Request) FormatPrint() {
-	var tempStr = req.Method
+	tempStr := req.Method
 	tempStr += " " + req.URL.String() + " HTTP/1.1\r\n"
 	for k, v := range req.Headers {
 		tempStr += k + ": " + v.(string) + "\r\n"
@@ -88,7 +95,7 @@ func (req *Request) FormatPrint() {
 简要输出
 */
 func (req *Request) SimplePrint() {
-	var tempStr = req.Method
+	tempStr := req.Method
 	tempStr += " " + req.URL.String() + " "
 	if req.Method == config.POST {
 		tempStr += req.PostData
@@ -97,7 +104,7 @@ func (req *Request) SimplePrint() {
 }
 
 func (req *Request) SimpleFormat() string {
-	var tempStr = req.Method
+	tempStr := req.Method
 	tempStr += " " + req.URL.String() + " "
 	if req.Method == config.POST {
 		tempStr += req.PostData
@@ -148,7 +155,7 @@ func (req *Request) PostDataMap() map[string]interface{} {
 			return result
 		}
 	} else if strings.HasPrefix(contentType, config.URLENCODED) {
-		var result = map[string]interface{}{}
+		result := map[string]interface{}{}
 		r, err := url.ParseQuery(req.PostData)
 		if err != nil {
 			return map[string]interface{}{

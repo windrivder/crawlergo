@@ -28,6 +28,7 @@ type Tab struct {
 	Ctx              *context.Context
 	Cancel           context.CancelFunc
 	NavigateReq      model2.Request
+	NavigateTitle    string
 	ExtraHeaders     map[string]interface{}
 	ResultList       []*model2.Request
 	TopFrameId       string
@@ -41,13 +42,13 @@ type Tab struct {
 
 	lock sync.Mutex
 
-	WG            sync.WaitGroup //当前Tab页的等待同步计数
+	WG            sync.WaitGroup // 当前Tab页的等待同步计数
 	collectLinkWG sync.WaitGroup
-	loadedWG      sync.WaitGroup //Loaded之后的等待计数
-	formSubmitWG  sync.WaitGroup //表单提交完毕的等待计数
-	removeLis     sync.WaitGroup //移除事件监听
-	domWG         sync.WaitGroup //DOMContentLoaded 的等待计数
-	fillFormWG    sync.WaitGroup //填充表单任务
+	loadedWG      sync.WaitGroup // Loaded之后的等待计数
+	formSubmitWG  sync.WaitGroup // 表单提交完毕的等待计数
+	removeLis     sync.WaitGroup // 移除事件监听
+	domWG         sync.WaitGroup // DOMContentLoaded 的等待计数
+	fillFormWG    sync.WaitGroup // 填充表单任务
 }
 
 type TabConfig struct {
@@ -72,7 +73,7 @@ type bindingCallPayload struct {
 func NewTab(browser *Browser, navigateReq model2.Request, config TabConfig) *Tab {
 	var tab Tab
 	tab.ExtraHeaders = map[string]interface{}{}
-	var DOMContentLoadedRun = false
+	DOMContentLoadedRun := false
 	tab.Ctx, tab.Cancel = browser.NewTab(config.TabRunTimeout)
 	for key, value := range browser.ExtraHeaders {
 		navigateReq.Headers[key] = value
@@ -117,7 +118,7 @@ func NewTab(browser *Browser, navigateReq model2.Request, config TabConfig) *Tab
 				tab.WG.Add(1)
 				go tab.HandleRedirectionResp(v)
 			}
-		//case *network.EventLoadingFailed:
+		// case *network.EventLoadingFailed:
 		//	logger.Logger.Error("EventLoadingFailed ", v.ErrorText)
 		// 401 407 要求认证 此时会阻塞当前页面 需要处理解决
 		case *fetch.EventAuthRequired:
@@ -185,6 +186,8 @@ func (tab *Tab) Start() {
 			network.SetExtraHTTPHeaders(tab.ExtraHeaders),
 			// 执行导航
 			chromedp.Navigate(tab.NavigateReq.URL.String()),
+			// 获取执行导航 title
+			chromedp.Title(&tab.NavigateTitle),
 		}),
 	); err != nil {
 		if errors.Is(err, context.Canceled) {
@@ -221,17 +224,14 @@ func (tab *Tab) Start() {
 		tab.EncodeAllURLWithCharset()
 	}
 
-	//fmt.Println(tab.NavigateReq.URL.String(), len(tab.ResultList))
-	//for _, v := range tab.ResultList {
-	//	v.SimplePrint()
-	//}
+	// fmt.Println(tab.NavigateReq.URL.String(), len(tab.ResultList))
 	// fmt.Println("Finished " + tab.NavigateReq.Method + " " + tab.NavigateReq.URL.String())
 }
 
 func RunWithTimeOut(ctx *context.Context, timeout time.Duration, tasks chromedp.Tasks) chromedp.ActionFunc {
 	return func(ctx context.Context) error {
 		timeoutContext, _ := context.WithTimeout(ctx, timeout)
-		//defer cancel()
+		// defer cancel()
 		return tasks.Do(timeoutContext)
 	}
 }
@@ -255,9 +255,9 @@ func (tab *Tab) AddResultUrl(method string, _url string, source string) {
 	// 处理Host绑定
 	if host, ok := tab.NavigateReq.Headers["Host"]; ok {
 		if host != navUrl.Hostname() && url.Hostname() == host {
-			url, _ = model2.GetUrl(strings.Replace(url.String(), "://"+url.Hostname(), "://"+navUrl.Hostname(), -1), *navUrl)
+			url, _ = model2.GetUrl(strings.ReplaceAll(url.String(), "://"+url.Hostname(), "://"+navUrl.Hostname()), *navUrl)
 			option.Headers["Host"] = host
-			referer = strings.Replace(navUrl.String(), navUrl.Host, host.(string), -1)
+			referer = strings.ReplaceAll(navUrl.String(), navUrl.Host, host.(string))
 		}
 	}
 	// 添加Cookie
@@ -379,7 +379,7 @@ func (tab *Tab) DetectCharset() {
 	defer cancel()
 	var content string
 	var ok bool
-	var getCharsetRegex = regexp.MustCompile("charset=(.+)$")
+	getCharsetRegex := regexp.MustCompile("charset=(.+)$")
 	err := chromedp.AttributeValue(`meta[http-equiv=Content-Type]`, "content", &content, &ok, chromedp.ByQuery).Do(tCtx)
 	if err != nil || !ok {
 		return
