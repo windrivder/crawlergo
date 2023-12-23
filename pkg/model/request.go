@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	wappalyzer "github.com/projectdiscovery/wappalyzergo"
 	"github.com/windrivder/crawlergo/pkg/config"
 	"github.com/windrivder/crawlergo/pkg/tools"
 )
@@ -38,11 +39,12 @@ type Request struct {
 	RedirectionFlag bool
 	Proxy           string
 
-	RespHeaders  map[string]interface{}
+	RespHeaders  map[string][]string
 	RespBodyHash string
 	Title        string
 	IPAddress    string
 	StatusCode   int64
+	AppInfos     map[string]wappalyzer.AppInfo
 }
 
 var supportContentType = []string{config.JSON, config.URLENCODED}

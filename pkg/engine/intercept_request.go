@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"io"
+	"net/http"
 	"net/textproto"
 	"regexp"
 	"strconv"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/chromedp/cdproto/fetch"
 	"github.com/chromedp/cdproto/network"
+	wappalyzer "github.com/projectdiscovery/wappalyzergo"
+	"github.com/spf13/cast"
 	"github.com/windrivder/crawlergo/pkg/config"
 	"github.com/windrivder/crawlergo/pkg/logger"
 	model2 "github.com/windrivder/crawlergo/pkg/model"
@@ -204,7 +207,20 @@ func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 	defer tab.WG.Done()
 
 	if tab.IsNavigatorRequest(v.LoaderID.String()) {
-		tab.ResultList[0].RespHeaders = v.Response.Headers
+		headers := http.Header{}
+		for k, v := range v.Response.Headers {
+			switch vv := v.(type) {
+			case string:
+				headers.Set(k, vv)
+			case []string:
+				for idx := range vv {
+					headers.Add(k, vv[idx])
+				}
+			default:
+				headers.Set(k, cast.ToString(v))
+			}
+		}
+		tab.ResultList[0].RespHeaders = headers
 		tab.ResultList[0].StatusCode = v.Response.Status
 		tab.ResultList[0].IPAddress = v.Response.RemoteIPAddress
 		tab.ResultList[0].Title = tab.NavigateTitle
@@ -222,6 +238,8 @@ func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 		sha := sha256.New()
 		sha.Write(res)
 		tab.NavResult.RespBodyHash = string(sha.Sum(nil))
+		w, _ := wappalyzer.New()
+		tab.NavResult.AppInfos = w.FingerprintWithInfo(tab.NavResult.RespHeaders, res)
 	}
 
 	resStr := string(res)

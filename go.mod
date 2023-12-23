@@ -11,8 +11,9 @@ require (
 	github.com/gogf/gf v1.16.6
 	github.com/panjf2000/ants/v2 v2.2.2
 	github.com/pkg/errors v0.8.1
+	github.com/projectdiscovery/wappalyzergo v0.0.109 // indirect
 	github.com/sirupsen/logrus v1.4.2
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.23.6
-	golang.org/x/net v0.7.0
+	golang.org/x/net v0.10.0
 )
