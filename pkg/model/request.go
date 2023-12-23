@@ -38,7 +38,6 @@ type Request struct {
 	RedirectionFlag bool
 	Proxy           string
 
-	RequestID    string
 	RespHeaders  map[string]interface{}
 	RespBodyHash string
 	Title        string
@@ -80,7 +79,7 @@ func GetRequest(method string, URL *URL, options ...Options) Request {
 func (req *Request) FormatPrint() {
 	tempStr := req.Method
 	tempStr += " " + req.URL.String() + " HTTP/1.1\r\n"
-	for k, v := range req.Headers {
+	for k, v := range req.RespHeaders {
 		tempStr += k + ": " + v.(string) + "\r\n"
 	}
 	tempStr += "\r\n"

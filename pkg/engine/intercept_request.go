@@ -41,7 +41,6 @@ func (tab *Tab) InterceptRequest(v *fetch.EventRequestPaused) {
 		PostData: _req.PostData,
 	}
 	req := model2.GetRequest(_req.Method, url, _option)
-	req.RequestID = string(v.RequestID)
 
 	if IsIgnoredByKeywordMatch(req, tab.config.IgnoreKeywords) {
 		_ = fetch.FailRequest(v.RequestID, network.ErrorReasonBlockedByClient).Do(ctx)
@@ -203,6 +202,15 @@ func (tab *Tab) IsTopFrame(FrameID string) bool {
 */
 func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 	defer tab.WG.Done()
+
+	if tab.IsNavigatorRequest(v.LoaderID.String()) {
+		tab.ResultList[0].RespHeaders = v.Response.Headers
+		tab.ResultList[0].StatusCode = v.Response.Status
+		tab.ResultList[0].IPAddress = v.Response.RemoteIPAddress
+		tab.ResultList[0].Title = tab.NavigateTitle
+		tab.NavResult = tab.ResultList[0]
+	}
+
 	ctx := tab.GetExecutor()
 	res, err := network.GetResponseBody(v.RequestID).Do(ctx)
 	if err != nil {
@@ -210,19 +218,10 @@ func (tab *Tab) ParseResponseURL(v *network.EventResponseReceived) {
 		return
 	}
 
-	if v.RequestID.String() == tab.NavNetworkID {
-		h := sha256.New()
-		h.Write(res)
-		for idx, result := range tab.ResultList {
-			if result.RequestID == v.RequestID.String() {
-				result.RespHeaders = v.Response.Headers
-				result.StatusCode = v.Response.Status
-				result.IPAddress = v.Response.RemoteIPAddress
-				result.Title = tab.NavigateTitle
-				result.RespBodyHash = string(h.Sum(nil))
-			}
-			tab.ResultList[idx] = result
-		}
+	if tab.IsNavigatorRequest(v.LoaderID.String()) {
+		sha := sha256.New()
+		sha.Write(res)
+		tab.NavResult.RespBodyHash = string(sha.Sum(nil))
 	}
 
 	resStr := string(res)

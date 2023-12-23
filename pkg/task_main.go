@@ -261,14 +261,14 @@ func (t *tabTask) Task() {
 
 	// 收集结果
 	t.crawlerTask.Result.resultLock.Lock()
-	t.crawlerTask.Result.AllReqList = append(t.crawlerTask.Result.AllReqList, tab.ResultList...)
+	t.crawlerTask.Result.AllReqList = append(t.crawlerTask.Result.AllReqList, tab.NavResult)
+	if !t.crawlerTask.filter.DoFilter(tab.NavResult) {
+		t.crawlerTask.Result.ReqList = append(t.crawlerTask.Result.ReqList, tab.NavResult)
+	}
 	t.crawlerTask.Result.resultLock.Unlock()
 
 	for _, req := range tab.ResultList {
 		if !t.crawlerTask.filter.DoFilter(req) {
-			t.crawlerTask.Result.resultLock.Lock()
-			t.crawlerTask.Result.ReqList = append(t.crawlerTask.Result.ReqList, req)
-			t.crawlerTask.Result.resultLock.Unlock()
 			if !engine2.IsIgnoredByKeywordMatch(*req, t.crawlerTask.Config.IgnoreKeywords) {
 				t.crawlerTask.addTask2Pool(req)
 			}

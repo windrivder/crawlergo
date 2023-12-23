@@ -31,6 +31,7 @@ type Tab struct {
 	NavigateTitle    string
 	ExtraHeaders     map[string]interface{}
 	ResultList       []*model2.Request
+	NavResult        *model2.Request
 	TopFrameId       string
 	LoaderID         string
 	NavNetworkID     string
