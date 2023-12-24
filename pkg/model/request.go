@@ -122,6 +122,10 @@ func (req *Request) NoHeaderId() string {
 }
 
 func (req *Request) UniqueId() string {
+	if req == nil {
+		return ""
+	}
+
 	if req.RedirectionFlag {
 		return tools.StrMd5(req.NoHeaderId() + "Redirection")
 	} else {
