@@ -20,7 +20,7 @@ var Logger *logrus.Logger
 
 func init() {
 	Logger = logrus.New()
-	level := "Debug"
+	level := "Info"
 	Logger.SetOutput(os.Stdout)
 	Logger.SetLevel(logLevelMap[level])
 }
